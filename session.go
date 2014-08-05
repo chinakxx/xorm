@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/go-xorm/core"
+	"github.com/axgle/mahonia"  //kxx gbk转utf-8
 )
 
 // Struct Session keep a pointer to sql.DB and provides all execution of all
@@ -2130,7 +2131,16 @@ func (session *Session) bytes2Value(col *core.Column, fieldValue *reflect.Value,
 			return ErrUnSupportedType
 		}
 	case reflect.String:
-		fieldValue.SetString(string(data))
+	        //@todo kxx gbk转码
+	        if true {
+	            enc := mahonia.NewDecoder("GBK")
+	            gbkData := enc.ConvertString(string(data))
+	            //fmt.Println("kxx1:", data);
+	            //fmt.Println("kxx2:", gbkData)
+			    fieldValue.SetString(gbkData)
+	        } else {
+			    fieldValue.SetString(string(data))
+	        }
 	case reflect.Bool:
 		d := string(data)
 		v, err := strconv.ParseBool(d)
